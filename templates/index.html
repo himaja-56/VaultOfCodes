@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: #2c2c2e;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+      border-bottom: 1px solid #3e3e40;
+    }
+
+    #chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 0.75rem 1rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background-color: #0078d4;
+      color: white;
+    }
+
+    .ai-message {
+      align-self: flex-start;
+      background-color: #2a2a2e;
+      border: 1px solid #444;
+    }
+
+    #input-area {
+      padding: 1rem;
+      border-top: 1px solid #333;
+      background-color: #2c2c2e;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 15px;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background-color: #2b2b2b;
+      color: white;
+      font-size: 1rem;
+      height: 48px;
+      appearance: none;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      border: none;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      resize: none;
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+    }
+
+    button {
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      background-color: #00b386;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .feedback {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .feedback a {
+      color: #00b386;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .feedback a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    AI Assistant
+  </header>
+
+  <div id="chat-container">
+    {% for pair in history %}
+      <div class="message user-message">{{ pair.user }}</div>
+      <div class="message ai-message">{{ pair.ai }}
+        {% if pair.feedback == None %}
+        <div class="feedback">
+          Was this response helpful?
+          <a href="{{ url_for('feedback', index=loop.index0, value='yes') }}">Yes</a> |
+          <a href="{{ url_for('feedback', index=loop.index0, value='no') }}">No</a>
+        </div>
+        {% else %}
+        <div class="feedback">Feedback: {{ pair.feedback }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <form id="input-area" method="POST">
+    <select name="function" required>
+      <option value="choose">Choose Task</option>
+      <option value="question">Answer a Question</option>
+      <option value="summary">Summarize a Text</option>
+      <option value="creative">Generate a Creative Story</option>
+    </select>
+    <textarea name="user_input" placeholder="Type a message or ask something..." required></textarea>
+    <button type="submit">Send</button>
+  </form>
+</body>
+</html>
